@@ -1,156 +1,47 @@
-# VERIS
+# veris-architecture
 
-**Student Attendance & Financial Management System for Student Organizations**
+> **The single source of truth for VERIS system design, architecture decisions, and development standards.**
 
-> *VERIS — from Latin: truth, record.*
-
-VERIS is a multi-tenant SaaS platform that centralizes attendance tracking, membership management, financial collection, and student clearance for Philippine academic student organizations. Organizations subscribe to a tier, and VERIS handles the operational overhead so officers don't have to.
+VERIS is a SaaS Student Attendance and Financial Management System built for student organizations. This repository contains the architectural documentation that governs how the system is designed, built, and maintained.
 
 ---
 
-## Subscription Tiers
+## Who This Is For
 
-| Tier | Price | Core Function |
-|---|---|---|
-| **Basic** | ₱2 / student / yr | Attendance management |
-| **Plus** | ₱3 / student / yr | Basic + financial management & manual fines |
-| **Premium** | ₱4 / student / yr | Full suite + student self-service portal |
+This repository is for the **Atlas Dev Team** — engineers, contributors, and technical stakeholders working on VERIS. Before writing a single line of code, every developer is expected to read and understand the documents here.
+
+> If your implementation contradicts something in this repo, **the architecture doc wins** — or you open a PR to formally change it.
 
 ---
 
-## Tech Stack
+## Repository Structure
 
-| Layer | Technology |
-|---|---|
-| Framework | Next.js 14 (App Router) |
-| Database & Auth | Supabase (PostgreSQL + Supabase Auth) |
-| File Storage | Firebase Storage *(GCash receipts only)* |
-| Client State | React Query (TanStack Query) |
-| Styling | Tailwind CSS |
-
----
-
-## Project Structure
-
-```
-veris/
-├── src/
-│   ├── app/                    # Next.js App Router (pages & layouts)
-│   │   ├── (officer)/          # Officer-facing routes
-│   │   ├── (student)/          # Student portal routes (Premium)
-│   │   └── api/                # External webhooks ONLY (no internal mutations)
-│   │
-│   ├── features/               # Feature-driven modules (primary domain code)
-│   │   ├── attendance/
-│   │   ├── events/
-│   │   ├── members/
-│   │   ├── financials/         # Plus + Premium
-│   │   ├── fines/              # Plus + Premium
-│   │   ├── clearance/          # Plus + Premium
-│   │   └── student-portal/     # Premium only
-│   │
-│   ├── components/             # Shared, domain-agnostic UI components only
-│   ├── lib/                    # Supabase client, Firebase client, utility fns
-│   └── types/                  # Global TypeScript types & Supabase DB types
-│
-├── supabase/
-│   ├── migrations/             # All schema changes as versioned migrations
-│   └── seed.sql                # Dev seed data
-│
-└── docs/
-    └── architecture/           # System Architecture Document (SAD)
-```
-
-> **Convention:** All domain logic lives inside `src/features/<domain>/`. Do not create a global `hooks/`, `utils/`, or `services/` folder for domain-specific code. See the System Architecture Document for the full feature-module structure.
+| File | Contents |
+|------|----------|
+| [`01-system-overview.md`](./01-system-overview.md) | Product context, subscription tiers, tech stack, high-level architecture |
+| [`02-architecture-principles.md`](./02-architecture-principles.md) | Feature-driven folder structure, Thick DB / Thin API philosophy |
+| [`03-nextjs-guidelines.md`](./03-nextjs-guidelines.md) | Data flow matrix, RSC vs Client Components, Server Actions |
+| [`04-supabase-firebase-auth.md`](./04-supabase-firebase-auth.md) | RBAC definitions, RLS policies, Firebase upload workflow |
+| [`05-database-schema.md`](./05-database-schema.md) | SQL table definitions, relationships, triggers |
+| [`06-implementation-roadmap.md`](./06-implementation-roadmap.md) | Phased rollout: Basic → Plus → Premium |
 
 ---
 
-## Core Data Flow Rules
+## Quick Links
 
-These are **non-negotiable** conventions. Read them before writing any data-fetching or mutation code.
-
-| Operation | Method | Why |
-|---|---|---|
-| Initial page data | React Server Component (RSC) | Zero client JS overhead; data arrives with the HTML |
-| Live / reactive data | React Query (`useQuery`) inside Client Components | Background refetch, caching, optimistic UI |
-| All writes / mutations | Next.js Server Actions | Never exposes DB credentials to the client; no `app/api/` routes for internal data |
-| File uploads (GCash receipts) | Server Action–generated Firebase signed URL | Client uploads directly to Firebase; Server Action records the reference in Supabase |
+- **Tech Stack:** Next.js (App Router) · Supabase (PostgreSQL + Auth) · Firebase Storage · React Query · Tailwind CSS · TypeScript
+- **Core Principle:** Business logic lives in the database (RLS + Triggers), not in the application layer.
+- **Data Flow Rule:** RSC for fetching → React Query for live data → Server Actions for all writes. No `app/api/` routes except external webhooks.
 
 ---
 
-## Getting Started
+## Contributing
 
-### Prerequisites
-
-- Node.js >= 18
-- A Supabase project (with the VERIS schema applied via migrations)
-- A Firebase project (Storage bucket configured)
-
-### Environment Variables
-
-Create a `.env.local` file at the project root. Required variables:
-
-```bash
-# Supabase
-NEXT_PUBLIC_SUPABASE_URL=
-NEXT_PUBLIC_SUPABASE_ANON_KEY=
-SUPABASE_SERVICE_ROLE_KEY=        # Server-side only — never expose to client
-
-# Firebase
-NEXT_PUBLIC_FIREBASE_PROJECT_ID=
-FIREBASE_CLIENT_EMAIL=            # Server-side only
-FIREBASE_PRIVATE_KEY=             # Server-side only
-NEXT_PUBLIC_FIREBASE_STORAGE_BUCKET=
-```
-
-> **Security:** Variables prefixed with `NEXT_PUBLIC_` are exposed to the browser. Service role keys and Firebase private keys must **never** carry the `NEXT_PUBLIC_` prefix.
-
-### Installation
-
-```bash
-# Install dependencies
-npm install
-
-# Apply Supabase migrations
-npx supabase db push
-
-# Run development server
-npm run dev
-```
+1. All architectural changes require a PR with a clear rationale.
+2. If a decision contradicts an existing doc, update the relevant `.md` file in the same PR.
+3. Use the section/heading structure already established in each file — do not restructure arbitrarily.
+4. Code snippets in docs must include the target file path as a comment on the first line.
 
 ---
 
-## Architecture Documentation
-
-Full architectural decisions, database schema, RLS policies, and implementation roadmap are documented in `/docs/architecture/`.
-
-| Document | Status |
-|---|---|
-| Section 1 — System Overview | ✅ Draft |
-| Section 2 — Architecture Principles & Conventions | 🔲 Pending |
-| Section 3 — Dev Notes: Next.js | 🔲 Pending |
-| Section 4 — Dev Notes: Supabase & Firebase | 🔲 Pending |
-| Section 5 — Database Schema & Data Dictionary | 🔲 Pending |
-| Section 6 — Implementation Roadmap | 🔲 Pending |
-
----
-
-## Development Conventions (Quick Reference)
-
-**Do:**
-- Write business rules as PostgreSQL RLS policies and triggers — not in Server Actions
-- Scope all data queries to `org_id` — multi-tenancy is enforced at the DB level
-- Use Server Actions for every mutation — no exceptions for internal operations
-- Keep feature code inside `src/features/<domain>/`
-
-**Do Not:**
-- Create `app/api/` routes for internal mutations
-- Fetch data in Client Components on initial render (use RSC instead)
-- Store Firebase private keys or Supabase service role keys in `NEXT_PUBLIC_` variables
-- Bypass RLS by using the service role key in client-accessible code paths
-
----
-
-## License
-
-Proprietary. All rights reserved. © 2026 VERIS / Atlas Dev Team.
+*Maintained by the Atlas Dev Team. Questions? Raise an issue or ping the lead architect.*
