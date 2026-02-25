@@ -82,6 +82,7 @@ VERIS is sold on an **annual per-student pricing model** with tier-based feature
 | **Frontend Framework** | Next.js 16+ (App Router) | RSC-first data fetching, Server Actions for mutations, file-based routing |
 | **Language** | TypeScript | Type safety across the full stack |
 | **Styling** | Tailwind CSS | Utility-first, consistent with design system |
+| **UI Component Library** | ShadCN UI | Unstyled, composable primitives in `src/components/ui/`; feature components compose these |
 | **Database** | Supabase (PostgreSQL) | Managed Postgres with built-in Auth, RLS, and real-time |
 | **Authentication** | Supabase Auth | Officer auth (email/password); Student auth (Google OAuth, Premium only) |
 | **Client State / Fetching** | React Query (TanStack Query) | Live data, cache invalidation, optimistic updates |
@@ -133,6 +134,7 @@ Based on the organization's member import template, students carry the following
 │                                                                 │
 │   React Server Components (initial render, SEO, data fetch)     │
 │   React Client Components + React Query (live, interactive UI)  │
+│   ShadCN UI primitives (src/components/ui/) composed by features│
 └───────────────┬─────────────────────────────┬───────────────────┘
                 │ RSC / Server Actions        │ React Query (client)
                 ▼                             ▼
@@ -200,8 +202,8 @@ UI-level feature hiding (hiding buttons, navigation items) is a **UX convenience
 
 | Document | When to Read |
 |----------|-------------|
-| [02-architecture-principles.md](./02-architecture-principles.md) | Before writing any code — folder structure and core patterns |
-| [03-nextjs-guidelines.md](./03-nextjs-guidelines.md) | Before building any Next.js component or action |
+| [02-architecture-principles.md](./02-architecture-principles.md) | Before writing any code — folder structure, core patterns, and ShadCN component strategy |
+| [03-nextjs-guidelines.md](./03-nextjs-guidelines.md) | Before building any Next.js component, action, or ShadCN composition |
 | [04-supabase-firebase-auth.md](./04-supabase-firebase-auth.md) | Before touching auth, RLS, or file uploads |
 | [05-database-schema.md](./05-database-schema.md) | Before writing any SQL or Supabase query |
 | [06-implementation-roadmap.md](./06-implementation-roadmap.md) | For understanding build order and phase dependencies |

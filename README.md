@@ -19,8 +19,8 @@ This repository is for the **Atlas Dev Team** — engineers, contributors, and t
 | File | Contents |
 |------|----------|
 | [`01-system-overview.md`](./01-system-overview.md) | Product context, subscription tiers, tech stack, high-level architecture |
-| [`02-architecture-principles.md`](./02-architecture-principles.md) | Feature-driven folder structure, Thick DB / Thin API philosophy |
-| [`03-nextjs-guidelines.md`](./03-nextjs-guidelines.md) | Data flow matrix, RSC vs Client Components, Server Actions |
+| [`02-architecture-principles.md`](./02-architecture-principles.md) | Feature-driven folder structure, Thick DB / Thin API philosophy, ShadCN component strategy |
+| [`03-nextjs-guidelines.md`](./03-nextjs-guidelines.md) | Data flow matrix, RSC vs Client Components, Server Actions, ShadCN usage |
 | [`04-supabase-firebase-auth.md`](./04-supabase-firebase-auth.md) | RBAC definitions, RLS policies, Firebase upload workflow |
 | [`05-database-schema.md`](./05-database-schema.md) | SQL table definitions, relationships, triggers |
 | [`06-implementation-roadmap.md`](./06-implementation-roadmap.md) | Phased rollout: Basic → Plus → Premium |
@@ -29,7 +29,7 @@ This repository is for the **Atlas Dev Team** — engineers, contributors, and t
 
 ## Quick Links
 
-- **Tech Stack:** Next.js (App Router) · Supabase (PostgreSQL + Auth) · Firebase Storage · React Query · Tailwind CSS · TypeScript
+- **Tech Stack:** Next.js (App Router) · Supabase (PostgreSQL + Auth) · Firebase Storage · React Query · Tailwind CSS · ShadCN UI · TypeScript
 - **Core Principle:** Business logic lives in the database (RLS + Triggers), not in the application layer.
 - **Data Flow Rule:** RSC for fetching → React Query for live data → Server Actions for all writes. No `app/api/` routes except external webhooks.
 
