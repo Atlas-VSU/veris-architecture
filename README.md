@@ -44,4 +44,4 @@ This repository is for the **Atlas Dev Team** — engineers, contributors, and t
 
 ---
 
-*Maintained by the Atlas Dev Team. Questions? Raise an issue or ping the lead architect.*
+*Maintained by the Atlas Dev Team. Questions? Raise an issue or ping the lead architect or just contact me @Joshua Sosmeña.*
