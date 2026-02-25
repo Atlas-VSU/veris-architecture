@@ -16,7 +16,7 @@ Read [02-architecture-principles.md](./02-architecture-principles.md) first. Thi
 
 ## 1. App Router Structure
 
-VERIS uses **Route Groups** to separate the three distinct application surfaces — auth, officer dashboard, and student portal — without affecting URL paths.
+VERIS uses **Route Groups** to separate the four distinct application surfaces — auth, officer dashboard, student portal, and system admin — without affecting URL paths.
 
 ### Full Route Tree (Subject to change over time)
 
@@ -79,6 +79,18 @@ src/app/
 │   │           └── page.tsx          # Fine appeal submission
 │   └── clearance/
 │       └── page.tsx                  # Clearance self-check + certificate download
+│
+├── (system-admin)/                   # Route Group: System Admin (Platform Management)
+│   ├── layout.tsx                    # System Admin shell (auth guard: system_admin only)
+│   ├── page.tsx                      # Platform overview dashboard
+│   ├── organizations/
+│   │   ├── page.tsx                  # Organization list + management
+│   │   └── [orgId]/
+│   │       └── page.tsx              # Single org detail (tier, status, officers)
+│   ├── invites/
+│   │   └── page.tsx                  # Generate & manage org onboarding invite URLs
+│   └── audit-log/
+│       └── page.tsx                  # Platform-wide audit log viewer
 │
 └── api/                              # API Routes — ONLY for external webhooks
     └── webhooks/
@@ -184,6 +196,7 @@ export default async function DashboardLayout({
   // Officers only — students with Google OAuth are redirected to portal
   const role = user.app_metadata?.role;
   if (role === "student") redirect("/portal");
+  if (role === "system_admin") redirect("/system-admin");
 
   return <DashboardShell user={user}>{children}</DashboardShell>;
 }
@@ -223,6 +236,36 @@ export default async function PortalLayout({
   return <PortalShell user={user}>{children}</PortalShell>;
 }
 ```
+
+### System Admin Layout (Auth Guard)
+
+```tsx
+// src/app/(system-admin)/layout.tsx
+import { redirect } from "next/navigation";
+import { createServerClient } from "@/lib/supabase/server";
+import { SystemAdminShell } from "@/components/layout/SystemAdminShell";
+
+export default async function SystemAdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
+  const supabase = await createServerClient();
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
+
+  if (!user) redirect("/login");
+
+  // System Admin only — all other roles are redirected
+  const role = user.app_metadata?.role;
+  if (role !== "system_admin") redirect("/");
+
+  return <SystemAdminShell user={user}>{children}</SystemAdminShell>;
+}
+```
+
+> **Note:** System Admin accounts are **seeded directly in the database** — there is no self-registration flow. The `(system-admin)` route group is entirely invisible to officers and students.
 
 ---
 

@@ -50,7 +50,11 @@ src/
 │   │   ├── financials/
 │   │   ├── clearance/
 │   │   └── settings/
-│   └── (portal)/                 # Student portal route group (Premium)
+│   ├── (portal)/                 # Student portal route group (Premium)
+│   └── (system-admin)/           # System Admin route group (platform management)
+│       ├── organizations/
+│       ├── invites/
+│       └── audit-log/
 │
 ├── components/                   # Shared application-level components
 │   ├── ui/                       # ShadCN UI primitives (Button, Dialog, etc.)
@@ -68,7 +72,12 @@ src/
 │   ├── financials/
 │   ├── clearance/
 │   ├── organizations/
-│   └── auth/
+│   ├── auth/
+│   └── system-admin/             # Platform management (System Admin only)
+│       ├── components/           # System Admin UI (OrgTable, InviteForm, AuditViewer)
+│       ├── hooks/                # React Query hooks for platform data
+│       ├── actions/              # Server Actions (generateInviteUrl, suspendOrg, etc.)
+│       └── types/                # System Admin types
 │
 ├── lib/                          # Shared infrastructure utilities
 │   ├── supabase/                 # Supabase client initialization (server + client)

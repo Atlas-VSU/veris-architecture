@@ -26,14 +26,17 @@ The architecture decisions in this repository are deliberate and load-bearing. I
 
 **Primary users:**
 
-| Role | Description |
-|------|-------------|
-| **Admin** | Organization owner. Full system access including billing, officer management, and subscription. |
-| **Manager** | Operational lead. Manages events, financials, and clearance. Cannot change roles or subscription. |
-| **Staff** | Execution-level. Handles attendance check-in and member directory lookup only. |
-| **Student** | End-user (Premium only). Registers via Google OAuth, self-submits personal data (for data privacy compliance), and is verified by the organization before gaining full portal access. |
+| Role | Scope | Description |
+|------|-------|-------------|
+| **System Admin** | Platform | VERIS platform administrator. Manages organizations, generates onboarding invite URLs, oversees platform-wide data with strict data privacy controls. Operates outside the org tenant model. |
+| **Admin** | Organization | Organization owner. Full system access including billing, officer management, and subscription. |
+| **Manager** | Organization | Operational lead. Manages events, financials, and clearance. Cannot change roles or subscription. |
+| **Staff** | Organization | Execution-level. Handles attendance check-in and member directory lookup only. |
+| **Student** | Organization | End-user (Premium only). Registers via Google OAuth, self-submits personal data (for data privacy compliance), and is verified by the organization before gaining full portal access. |
 
 > **Note:** The multi-role system (Admin / Manager / Staff) is a **Premium-exclusive feature**. Basic and Plus plans operate with a single officer account that has full access.
+
+> **Note:** The **System Admin** role is platform-level — it is not part of any organization and is not tied to subscription tiers. System Admins are managed directly in the database (seeded, not self-registered). See [04-supabase-firebase-auth.md](./04-supabase-firebase-auth.md) for the full auth flow.
 
 ---
 
@@ -84,7 +87,7 @@ VERIS is sold on an **annual per-student pricing model** with tier-based feature
 | **Styling** | Tailwind CSS | Utility-first, consistent with design system |
 | **UI Component Library** | ShadCN UI | Unstyled, composable primitives in `src/components/ui/`; feature components compose these |
 | **Database** | Supabase (PostgreSQL) | Managed Postgres with built-in Auth, RLS, and real-time |
-| **Authentication** | Supabase Auth | Officer auth (email/password); Student auth (Google OAuth with self-registration + org verification, Premium only) |
+| **Authentication** | Supabase Auth | System Admin auth (email/password, seeded); Officer auth (email/password, invited via System Admin); Student auth (Google OAuth with self-registration + org verification, Premium only) |
 | **Client State / Fetching** | React Query (TanStack Query) | Live data, cache invalidation, optimistic updates |
 | **File Storage** | Firebase Storage | **Exclusively** for GCash payment receipt images |
 | **Hosting** | Vercel (inferred) | Optimal for Next.js App Router deployments |
@@ -156,7 +159,8 @@ Based on the organization's member import template, students carry the following
 │  └── Stored Functions (complex business logic)               │
 │                                                               │
 │  Supabase Auth                                                │
-│  ├── Officer Auth: email/password                            │
+│  ├── System Admin Auth: email/password (seeded, no signup)   │
+│  ├── Officer Auth: email/password (invited by System Admin)  │
 │  └── Student Auth: Google OAuth + self-reg (Premium only)    │
 └───────────────────────────────────────────────────────────────┘
 
@@ -180,6 +184,7 @@ VERIS is a **multi-tenant SaaS** where each **organization** is an isolated tena
 - Supabase RLS policies enforce `organization_id` scoping on **every query** — officers cannot read or write data outside their own organization.
 - Tier feature access is gated via the `organizations.tier` column, checked in RLS policies and Server Actions.
 - Students (Premium) are additionally scoped to their organization via their auth metadata.
+- **System Admins** operate outside the tenant model. They have cross-org read access for platform management (organization listing, subscription oversight, aggregate metrics) but are **prohibited from accessing individual student PII** unless explicitly required for a support action — and all such access is audit-logged. See [04-supabase-firebase-auth.md](./04-supabase-firebase-auth.md#5-rbac-enforcement) for data privacy constraints.
 
 > For the full RLS policy specifications, see [04-supabase-firebase-auth.md](./04-supabase-firebase-auth.md).
 
