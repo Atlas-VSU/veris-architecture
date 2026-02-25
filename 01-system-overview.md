@@ -31,7 +31,7 @@ The architecture decisions in this repository are deliberate and load-bearing. I
 | **Admin** | Organization owner. Full system access including billing, officer management, and subscription. |
 | **Manager** | Operational lead. Manages events, financials, and clearance. Cannot change roles or subscription. |
 | **Staff** | Execution-level. Handles attendance check-in and member directory lookup only. |
-| **Student** | End-user (Premium only). Self-service portal access via Google OAuth. |
+| **Student** | End-user (Premium only). Registers via Google OAuth, self-submits personal data (for data privacy compliance), and is verified by the organization before gaining full portal access. |
 
 > **Note:** The multi-role system (Admin / Manager / Staff) is a **Premium-exclusive feature**. Basic and Plus plans operate with a single officer account that has full access.
 
@@ -57,7 +57,7 @@ VERIS is sold on an **annual per-student pricing model** with tier-based feature
 | Officer clearance management | — | ✓ | ✓ |
 | Basic financial summaries | — | ✓ | ✓ |
 | Automated fines from attendance | — | — | ✓ |
-| Student portal (Google OAuth login) | — | — | ✓ |
+| Student portal (Google OAuth + self-registration) | — | — | ✓ |
 | Student self-service payment upload | — | — | ✓ |
 | Clearance self-check & certificate download | — | — | ✓ |
 | Fine appeal workflow | — | — | ✓ |
@@ -84,7 +84,7 @@ VERIS is sold on an **annual per-student pricing model** with tier-based feature
 | **Styling** | Tailwind CSS | Utility-first, consistent with design system |
 | **UI Component Library** | ShadCN UI | Unstyled, composable primitives in `src/components/ui/`; feature components compose these |
 | **Database** | Supabase (PostgreSQL) | Managed Postgres with built-in Auth, RLS, and real-time |
-| **Authentication** | Supabase Auth | Officer auth (email/password); Student auth (Google OAuth, Premium only) |
+| **Authentication** | Supabase Auth | Officer auth (email/password); Student auth (Google OAuth with self-registration + org verification, Premium only) |
 | **Client State / Fetching** | React Query (TanStack Query) | Live data, cache invalidation, optimistic updates |
 | **File Storage** | Firebase Storage | **Exclusively** for GCash payment receipt images |
 | **Hosting** | Vercel (inferred) | Optimal for Next.js App Router deployments |
@@ -157,7 +157,7 @@ Based on the organization's member import template, students carry the following
 │                                                               │
 │  Supabase Auth                                                │
 │  ├── Officer Auth: email/password                            │
-│  └── Student Auth: Google OAuth (Premium only)               │
+│  └── Student Auth: Google OAuth + self-reg (Premium only)    │
 └───────────────────────────────────────────────────────────────┘
 
 ┌───────────────────────────────────────────────────────────────┐
