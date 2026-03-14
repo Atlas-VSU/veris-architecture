@@ -212,3 +212,4 @@ UI-level feature hiding (hiding buttons, navigation items) is a **UX convenience
 | [04-supabase-firebase-auth.md](./04-supabase-firebase-auth.md) | Before touching auth, RLS, or file uploads |
 | [05-database-schema.md](./05-database-schema.md) | Before writing any SQL or Supabase query |
 | [06-implementation-roadmap.md](./06-implementation-roadmap.md) | For understanding build order and phase dependencies |
+| [07-supabase-migrations-guide.md](./07-supabase-migrations-guide.md) | Before writing any SQL migration, trigger, or RPC function |

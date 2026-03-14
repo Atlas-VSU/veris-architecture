@@ -24,6 +24,7 @@ This repository is for the **Atlas Dev Team** — engineers, contributors, and t
 | [`04-supabase-firebase-auth.md`](./04-supabase-firebase-auth.md) | RBAC definitions, RLS policies, Firebase upload workflow |
 | [`05-database-schema.md`](./05-database-schema.md) | SQL table definitions, relationships, triggers |
 | [`06-implementation-roadmap.md`](./06-implementation-roadmap.md) | Phased rollout: Basic → Plus → Premium |
+| [`07-supabase-migrations-guide.md`](./07-supabase-migrations-guide.md) | Migration conventions, CLI workflow, RPC/trigger authoring standards |
 
 ---
 
@@ -32,6 +33,7 @@ This repository is for the **Atlas Dev Team** — engineers, contributors, and t
 - **Tech Stack:** Next.js (App Router) · Supabase (PostgreSQL + Auth) · Firebase Storage · React Query · Tailwind CSS · ShadCN UI · TypeScript
 - **Core Principle:** Business logic lives in the database (RLS + Triggers), not in the application layer.
 - **Data Flow Rule:** RSC for fetching → React Query for live data → Server Actions for all writes. No `app/api/` routes except external webhooks.
+- **DB Changes:** All schema changes, triggers, and RPC functions are managed exclusively via Supabase CLI migration files — never via the dashboard directly.
 
 ---
 

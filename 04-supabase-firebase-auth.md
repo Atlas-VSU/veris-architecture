@@ -1,7 +1,7 @@
 # 04 — Supabase, Firebase & Authentication
 
 > **Document Status:** Living Document · Atlas Dev Team  
-> **Last Updated:** 02/25/2026  
+> **Last Updated:** March 14, 2026  
 > **Related Docs:** [Architecture Principles](./02-architecture-principles.md) · [Next.js Guidelines](./03-nextjs-guidelines.md) · [Database Schema](./05-database-schema.md)
 
 ---
@@ -448,6 +448,8 @@ This aligns with the **Thick DB, Thin API** principle: the database owns the log
 | Paginated list queries | Operations requiring `SECURITY DEFINER` (elevated privilege within controlled scope) |
 | Inserting a single row | Business logic with conditional branching (e.g., "create fine only if attendance rule is violated") |
 
+> **Authoring RPC functions in migration files:** See [07-supabase-migrations-guide.md](./07-supabase-migrations-guide.md#8-writing-rpc-functions-in-migration-files) for the full authoring workflow — file naming, `SECURITY INVOKER` vs `SECURITY DEFINER` decision rules, `GRANT EXECUTE` requirements, and ready-to-commit examples using VERIS table names.
+
 ### RPC Function Conventions
 
 | Convention | Detail |
@@ -838,6 +840,8 @@ $$;
 
 Triggers handle **automated, event-driven logic** that must run reliably regardless of which application endpoint initiated the change. They are the backbone of the Thick DB philosophy.
 
+> **Authoring triggers in migration files:** See [07-supabase-migrations-guide.md](./07-supabase-migrations-guide.md#7-writing-triggers-in-migration-files) for the full authoring workflow — file structure, naming conventions, and the complete SQL for the audit log trigger, payment status sync trigger, and absence fine generation trigger using real VERIS table and column names.
+
 ### Trigger Conventions
 
 | Convention | Detail |
@@ -1160,3 +1164,4 @@ The standard subscription pattern (within a React Query hook) is documented in [
 | [03-nextjs-guidelines.md](./03-nextjs-guidelines.md) | RSC vs Client Components, Server Action patterns, Supabase client initialization |
 | [05-database-schema.md](./05-database-schema.md) | SQL table definitions, complete RLS policies per table, trigger definitions |
 | [06-implementation-roadmap.md](./06-implementation-roadmap.md) | Build order: Basic → Plus → Premium |
+| [07-supabase-migrations-guide.md](./07-supabase-migrations-guide.md) | CLI setup, migration conventions, and how to author RLS/RPC/triggers in migration files |

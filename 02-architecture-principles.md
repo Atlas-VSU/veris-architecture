@@ -1,7 +1,7 @@
 # 02 — Architecture Principles
 
 > **Document Status:** Living Document · Atlas Dev Team  
-> **Last Updated:** 2026  
+> **Last Updated:** March 14, 2026  
 > **Related Docs:** [System Overview](./01-system-overview.md) · [Next.js Guidelines](./03-nextjs-guidelines.md) · [Database Schema](./05-database-schema.md)
 
 ---
@@ -188,6 +188,7 @@ The Next.js Server Actions are **thin wrappers**. They handle request parsing, c
 | **Request parsing** | Next.js Server Action | Zod schema validation on the incoming form data / arguments. |
 | **Error formatting** | Next.js Server Action | Transform database errors into user-friendly messages. |
 | **Cache invalidation** | Next.js + React Query | Server Actions call `revalidatePath()` / `revalidateTag()`; React Query `invalidateQueries()`. |
+| **Schema & migrations** | Supabase CLI migration files | All `CREATE TABLE`, `CREATE POLICY`, trigger functions, and RPC functions are authored as versioned `.sql` files in `supabase/migrations/`. Never via the Supabase dashboard in production. |
 
 ### Why This Matters
 
@@ -364,6 +365,7 @@ type ActionResponse<T = void> =
 | Feature-driven structure | Creating `src/hooks/useAttendance.ts` | `src/features/attendance/hooks/useAttendance.ts` |
 | ShadCN in `ui/` only | Adding a `FineStatusBadge` to `src/components/ui/` | `src/features/financials/components/FineStatusBadge.tsx` composing `ui/badge` |
 | Thick DB, Thin API | Checking user role in a Server Action with `if (role !== 'admin')` | RLS policy: `USING (auth.jwt() ->> 'role' = 'admin')` |
+| All schema changes via migration files | Editing tables or triggers directly in the Supabase dashboard | Author a new migration file via `supabase migration new <name>` and push via `supabase db push` |
 | Server Actions for writes | Creating `app/api/attendance/route.ts` for a POST endpoint | `src/features/attendance/actions/checkInStudent.ts` |
 | No client-side Supabase writes | `supabase.from('events').insert(...)` in a Client Component | Call a Server Action that does the insert |
 | Firebase for receipts only | Storing member profile photos in Firebase Storage | Store in Supabase Storage or reconsider the requirement |
